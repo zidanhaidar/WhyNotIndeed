@@ -1,0 +1,7 @@
+**/node_modules
+**/.DS_Store
+.next
+dev
+.env
+.git
+*.md

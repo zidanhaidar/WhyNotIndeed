@@ -1,0 +1,185 @@
+/* Don't Click That: an old office computer. Indigo room, a chunky beige monitor, a teal desktop, VT323 letters. */
+
+/* Only while this game is on screen: in-app links keep every page's stylesheet loaded, so the scope stops these rules leaking. */
+:where(html:has([data-page='dont-click-that'])) {
+  &:root {
+    --indigo: #2B2F7A;
+    --indigo-lo: #1B1E55;
+    --beige: #E9E1C9;
+    --beige-lo: #CFC4A4;
+    --danger: #E5383B;
+    --ink: #1D1A33;
+    --soft: #4E4A63;
+    --mint: #4FE3B0;
+    --display: 'VT323', 'Courier New', ui-monospace, monospace;
+
+    --bar-ink: #fff;
+    --bar-muted: #D3D6FF;
+    --bar-line: rgba(255, 255, 255, .4);
+    --bar-well: rgba(0, 0, 0, .25);
+    --bar-hover: rgba(255, 255, 255, .12);
+    --bar-active-bg: var(--mint);
+    --bar-active-ink: var(--ink);
+    --bar-active-muted: #0D5A43;
+    --bar-display: var(--display);
+    --bar-focus: var(--mint);
+
+    --m-bg: #FBF8EE;
+    --m-ink: var(--ink);
+    --m-soft: var(--soft);
+    --m-accent: var(--indigo);
+    --m-accent-ink: #fff;
+    --m-lose: #B3261E;
+    --m-display: var(--display);
+    --m-radius: 18px;
+    --m-backdrop: rgba(12, 12, 40, .62);
+  }
+
+  html& { background: var(--indigo); }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--ink);
+    font: 15px/1.45 var(--bar-font);
+    background:
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, .035) 0 2px, transparent 2px 6px),
+      radial-gradient(60% 50% at 30% 0%, rgba(79, 227, 176, .18), transparent 70%),
+      linear-gradient(var(--indigo), var(--indigo-lo));
+  }
+  button { font-family: inherit; }
+  :focus-visible { outline: 4px solid var(--mint); outline-offset: 2px; }
+
+  .computer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 22px;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 4px 24px 24px;
+    align-items: start;
+  }
+
+  /* ---------- the monitor ---------- */
+
+  .stage { min-width: 0; }
+  .monitor {
+    padding: 18px 18px 10px;
+    border: 3px solid var(--ink);
+    border-radius: 26px;
+    background: linear-gradient(var(--beige), var(--beige-lo));
+    box-shadow: 7px 7px 0 var(--ink), inset 0 -6px 0 rgba(0, 0, 0, .08);
+  }
+  .screen { position: relative; border: 3px solid var(--ink); border-radius: 12px; overflow: hidden; background: #0E6E6E; }
+  #desktop { display: block; width: 100%; touch-action: none; user-select: none; cursor: default; }
+  #desktop.grab { cursor: grab; }
+  #desktop.grabbing { cursor: grabbing; }
+  .monitor-foot { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 6px 4px 0; font: 18px/1 var(--display); color: #8A8068; }
+  .led { width: 10px; height: 10px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 8px var(--mint); border: 1.5px solid var(--ink); }
+
+  .cue {
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    max-width: 80%;
+    padding: 6px 18px 4px;
+    border: 3px solid var(--ink);
+    border-radius: 12px;
+    background: var(--mint);
+    font: 30px/1.05 var(--display);
+    text-align: center;
+    box-shadow: 4px 4px 0 var(--ink);
+    transform: translate(-50%, -50%) rotate(-2deg);
+    pointer-events: none;
+    animation: dont-click-that-cue .3s cubic-bezier(.2, 1.6, .5, 1);
+  }
+  .cue.bad { background: var(--danger); color: #fff; }
+
+  .start-card {
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    width: min(84%, 420px);
+    padding: 18px 20px 20px;
+    border: 3px solid var(--ink);
+    border-radius: 14px;
+    background: #FBF8EE;
+    box-shadow: 6px 6px 0 var(--ink);
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .start-card h2 { margin: 0 0 6px; font: 38px/1 var(--display); color: var(--danger); }
+  .start-card p { margin: 0 0 14px; }
+  .go {
+    padding: 8px 22px 6px;
+    border: 3px solid var(--ink);
+    border-radius: 10px;
+    background: var(--mint);
+    font: 26px/1 var(--display);
+    cursor: pointer;
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .go:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+
+  /* ---------- panel ---------- */
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px;
+    border: 3px solid var(--ink);
+    border-radius: 22px;
+    background: #FBF8EE;
+    box-shadow: 7px 7px 0 var(--ink);
+  }
+  .who { display: flex; align-items: center; gap: 12px; }
+  .who-face { width: 72px; height: 62px; flex: none; }
+  .who-face svg { width: 100%; height: 100%; display: block; }
+  .who-name { display: block; font: 38px/0.9 var(--display); }
+  .who-rank { font-size: 13px; font-weight: 700; color: var(--soft); }
+  .bubble { position: relative; margin: 0; min-height: 48px; padding: 10px 14px; border: 2.5px solid var(--ink); border-radius: 16px; background: #fff; font-weight: 700; }
+  .bubble::before { content: ""; position: absolute; top: -12px; left: 28px; border: 10px solid transparent; border-top: 0; border-bottom: 12px solid var(--ink); }
+  .bubble.pop { animation: dont-click-that-bpop .25s ease-out; }
+
+  .score { display: flex; gap: 10px; }
+  .count { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 8px; border: 3px solid var(--ink); border-radius: 14px; background: var(--indigo); color: #fff; transform: rotate(-2deg); }
+  .count.files { background: var(--danger); transform: rotate(2deg); }
+  .count span { font-size: 12.5px; font-weight: 700; }
+  .count b { font: 46px/1 var(--display); font-weight: 400; }
+  .backup-head { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 13.5px; }
+  .backup-head b { font: 28px/1 var(--display); font-weight: 400; }
+  .backup-bar { height: 12px; margin-top: 4px; border: 2.5px solid var(--ink); border-radius: 999px; background: #EDEAF5; overflow: hidden; }
+  .backup-bar i { display: block; height: 100%; background: repeating-linear-gradient(90deg, var(--mint) 0 10px, #33C493 10px 20px); }
+  .backup p { margin: 6px 0 0; font-size: 12.5px; font-weight: 700; color: var(--soft); }
+  .tips { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+  .tips li { display: flex; gap: 8px; font-size: 13.5px; }
+  .tips li::before { content: ">"; flex: none; font: 20px/1 var(--display); color: var(--indigo); }
+  .acts { display: flex; gap: 8px; }
+  .pill { flex: 1; padding: 8px 12px; border: 2.5px solid var(--ink); border-radius: 999px; background: #fff; font-weight: 700; font-size: 13.5px; cursor: pointer; box-shadow: 2px 2px 0 var(--ink); }
+  .pill:hover { background: #E9FFF6; }
+  .pill:disabled { opacity: .5; cursor: default; }
+  .best { margin: 0; font-size: 13px; font-weight: 700; color: var(--soft); }
+  .arcade-sheet .lead { font-size: 17px; }
+
+  @media (max-width: 1080px) {
+    .computer { grid-template-columns: 1fr; padding: 4px 14px 20px; }
+    .panel { display: grid; grid-template-columns: 1fr 1fr; }
+    .tips, .acts, .best, .bubble, .backup { grid-column: 1 / -1; }
+  }
+  @media (max-width: 560px) {
+    .panel { display: flex; }
+    .monitor { padding: 8px 8px 6px; border-radius: 16px; }
+    .start-card { padding: 12px; }
+    .start-card h2 { font-size: 28px; }
+    .start-card p { font-size: 13px; margin-bottom: 8px; }
+    .go { font-size: 22px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cue, .bubble.pop { animation: none; }
+  }
+}
+
+/* Animations live outside the scope (CSS does not allow them inside); the prefix keeps their names unique. */
+@keyframes dont-click-that-cue { from { transform: translate(-50%, -50%) rotate(-2deg) scale(1.7); opacity: 0; } }
+
+@keyframes dont-click-that-bpop { from { transform: scale(.95); opacity: .4; } }

@@ -1,0 +1,37 @@
+# WNI on Docker: the Next.js app (games, pages and API) and PostgreSQL 16.
+# Start:  docker compose up -d --build      Then open http://localhost:8080
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-wni}
+      POSTGRES_USER: ${POSTGRES_USER:-wni}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the .env file (see .env.example)}
+    volumes:
+      - wni-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGDATABASE: ${POSTGRES_DB:-wni}
+      PGUSER: ${POSTGRES_USER:-wni}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+    ports:
+      - "${APP_PORT:-8080}:8080"
+
+volumes:
+  wni-db:

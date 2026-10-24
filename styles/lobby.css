@@ -1,0 +1,229 @@
+/* WNI lobby: a sunny toy box. Thick ink outlines, sticker shadows, each game in its own color. */
+
+/* Lobby and site pages only: the scope keeps these rules off the game pages, since in-app links keep every stylesheet loaded. */
+:where(html:has([data-page='lobby'], [data-page='leaderboard'], [data-page='account'], [data-page='credits'], [data-page='not-found'])) {
+  &:root {
+    --sun: #FFDB6E;
+    --sun-2: #F5C94F;
+    --ink: #1D1A33;
+    --coral: #FF7A59;
+    --paper: #FFFFFF;
+    --soft: #4E4A63;
+    --display: 'Bowlby One', 'Arial Black', 'Segoe UI Black', Impact, sans-serif;
+    --body: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+    --m-bg: #fff;
+    --m-ink: var(--ink);
+    --m-soft: var(--soft);
+    --m-accent: var(--ink);
+    --m-display: var(--display);
+    --m-font: var(--body);
+  }
+
+  html& { background: var(--sun); }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--ink);
+    font: 16px/1.45 var(--body);
+    background-color: var(--sun);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='none' stroke='%23F0BE3F' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M20 14v12M14 20h12'/%3E%3Cpath d='M82 70q6-8 12 0t12 0'/%3E%3C/g%3E%3Ccircle cx='96' cy='22' r='4' fill='%23F0BE3F'/%3E%3Ccircle cx='34' cy='92' r='3' fill='%23F0BE3F'/%3E%3C/svg%3E");
+  }
+  button, a { font-family: inherit; }
+  :focus-visible { outline: 4px solid var(--coral); outline-offset: 4px; }
+
+  .lobby { max-width: 1180px; margin: 0 auto; padding: 30px 28px 36px; }
+
+  /* ---------- header ---------- */
+
+  .top { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 30px; }
+  .brand-row { display: flex; align-items: center; gap: 30px; flex-wrap: wrap; }
+  .wordmark { margin: 0; line-height: 0; }
+  .wordmark .wni-logo { display: block; width: 236px; height: auto; overflow: visible; transform: rotate(-3deg); transform-origin: 30% 60%; }
+  .motto {
+    position: relative;
+    margin: 0;
+    padding: 12px 22px 14px;
+    border: 3px solid var(--ink);
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 5px 5px 0 var(--ink);
+    font: 30px/1.05 var(--display);
+    transform: rotate(2deg);
+  }
+  /* speech bubble tail pointing back at the logo */
+  .motto::before, .motto::after { content: ""; position: absolute; top: 50%; width: 0; height: 0; border-style: solid; }
+  .motto::before { left: -21px; margin-top: -13px; border-width: 13px 21px 13px 0; border-color: transparent var(--ink) transparent transparent; }
+  .motto::after { left: -15px; margin-top: -9px; border-width: 9px 15px 9px 0; border-color: transparent #fff transparent transparent; }
+  .motto b { font-weight: 400; -webkit-text-stroke: 2px var(--ink); paint-order: stroke fill; }
+  .m-w { color: #FF6B57; }
+  .m-n { color: #3D86F0; }
+  .m-i { color: #2FBF71; }
+  .tagline { margin: 16px 0 0; font-size: 19px; font-weight: 700; }
+  .tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .tool { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+  .tool .ic { width: 16px; height: 16px; flex: none; }
+  .tool[aria-pressed="true"] { background: #FFF3C4; }
+  .tool-ranks { background: var(--ink) !important; color: #fff !important; box-shadow: 3px 3px 0 #FF6B57 !important; }
+  .top .acct-chip { --bar-active-bg: #fff; --bar-active-ink: var(--ink); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); padding: 3px 12px 3px 3px; font-size: 14px; }
+  .top .acct-chip.guest { padding: 7px 15px; }
+  .tool {
+    padding: 9px 16px;
+    border: 3px solid var(--ink);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 14px;
+    box-shadow: 3px 3px 0 var(--ink);
+    cursor: pointer;
+  }
+  .tool:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
+  .tool:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+
+  .section-h { margin: 0 0 16px; font: 24px var(--display); font-weight: 400; }
+
+  /* ---------- cards ---------- */
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(248px, 1fr)); gap: 30px 26px; margin-bottom: 44px; }
+  /* the games: 4, 3, 2 or 1 across depending on the room, and a short last row sits in the middle */
+  main:has(> .cards.games) { container-type: inline-size; }
+  .cards.games { display: flex; flex-wrap: wrap; justify-content: center; }
+  .cards.games .gcard { flex: 0 0 100%; }
+  @container (min-width: 522px) { .cards.games .gcard { flex-basis: calc((100% - 26px) / 2); } }
+  @container (min-width: 796px) { .cards.games .gcard { flex-basis: calc((100% - 2 * 26px) / 3); } }
+  @container (min-width: 1070px) { .cards.games .gcard { flex-basis: calc((100% - 3 * 26px) / 4); } }
+  .gcard {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    border: 3px solid var(--ink);
+    border-radius: 20px;
+    background: var(--paper);
+    color: var(--ink);
+    text-decoration: none;
+    overflow: hidden;
+    box-shadow: 7px 7px 0 var(--ink);
+    transform: rotate(var(--tilt, 0deg));
+    transition: transform .16s ease, box-shadow .16s ease;
+  }
+  .gcard:hover, .gcard:focus-visible { transform: rotate(0) translate(-3px, -5px); box-shadow: 11px 12px 0 var(--ink); }
+  .gcard:active { transform: translate(3px, 3px); box-shadow: 3px 3px 0 var(--ink); }
+  .gcard.launch { animation: lobby-launch .34s ease-in forwards; }
+
+
+  .art { position: relative; display: block; background: var(--g); border-bottom: 3px solid var(--ink); }
+  .art > svg { display: block; width: 100%; height: auto; }
+  .key {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border: 2.5px solid var(--ink);
+    border-radius: 50%;
+    background: #fff;
+    font: 15px var(--display);
+  }
+  .label { display: flex; flex-direction: column; gap: 6px; padding: 14px 18px 18px; flex: 1; }
+  .title { font: 22px/1.05 var(--display); }
+  .pitch { font-size: 15.5px; color: var(--soft); flex: 1; }
+  .meta { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+  .pegs { display: inline-flex; gap: 5px; }
+  .pegs i { width: 13px; height: 13px; border-radius: 50%; border: 2.5px solid var(--c); background: #fff; }
+  .pegs i.on { background: var(--c); }
+  .cleared { font-size: 13.5px; font-weight: 700; color: var(--soft); flex: 1; }
+  .play {
+    padding: 6px 18px 7px;
+    border: 2.5px solid var(--ink);
+    border-radius: 999px;
+    background: var(--g);
+    color: #fff;
+    font: 16px var(--display);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .gcard:hover .play { background: var(--ga); color: var(--ink); }
+  .site-card { border-style: dashed; }
+  .site-card .art { border-bottom-style: dashed; }
+  /* the leaderboard and account cards get their own row under the games, art beside the words */
+  /* the leaderboard and account cards: a section of their own, never part of the game list */
+  .board-row { margin: 0 0 44px; padding-top: 24px; border-top: 3px dashed rgba(29, 26, 51, .25); }
+  .site-cards { grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); margin-bottom: 0; }
+  .site-cards .gcard { flex-direction: row; }
+  .site-cards .art { flex: 0 0 46%; border-bottom: 0; border-right: 3px dashed var(--ink); display: flex; align-items: center; }
+  .site-cards .art > svg { height: 100%; min-height: 140px; }
+
+
+  /* ---------- cast ---------- */
+
+  .cast {
+    padding: 22px 24px 24px;
+    border: 3px solid var(--ink);
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 7px 7px 0 var(--ink);
+  }
+  .cast-head { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+  .cast-head h2 { margin: 0; font: 24px var(--display); font-weight: 400; }
+  .cast-head p { margin: 0; color: var(--soft); font-weight: 700; }
+  .cast-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .cast-list li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2px;
+    padding: 14px 12px 16px;
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--c) 18%, #fff);
+  }
+  .cface { width: 92px; height: 79px; margin-bottom: 6px; }
+  .cface svg { width: 100%; height: 100%; display: block; }
+  .cname { font: 22px var(--display); }
+  .crank { font-size: 13px; font-weight: 700; color: var(--soft); }
+  .cline { font-size: 14px; margin-top: 4px; }
+
+  .foot { margin-top: 30px; font-weight: 700; color: var(--soft); }
+  .foot p { margin: 0; display: flex; align-items: center; gap: 12px; }
+  .foot kbd { font-size: 16px; padding: 4px 10px; border: 2.5px solid var(--ink); border-bottom-width: 4px; border-radius: 8px; }
+  .sign { margin-top: 22px !important; padding-top: 18px; border-top: 3px dashed rgba(29, 26, 51, .25); }
+  .sign .wni-logo { width: 74px; height: auto; flex: none; overflow: visible; }
+  .sign b { color: var(--ink); }
+  .foot-links { margin-top: 12px !important; font-size: 14px; }
+  .foot-links a { color: var(--ink); text-underline-offset: 3px; }
+
+  @media (max-width: 860px) {
+    .cast-list { grid-template-columns: repeat(2, 1fr); }
+    .wordmark .wni-logo { width: 190px; }
+    .motto { font-size: 25px; }
+  }
+  @media (max-width: 560px) {
+    .brand-row { flex-direction: column; align-items: flex-start; gap: 22px; }
+    .wordmark .wni-logo { width: 168px; }
+    .motto { font-size: 22px; padding: 10px 16px 12px; }
+    /* bubble drops under the logo, so the tail points up */
+    .motto::before { top: -21px; left: 34px; margin-top: 0; border-width: 0 13px 21px 13px; border-color: transparent transparent var(--ink) transparent; }
+    .motto::after { top: -15px; left: 38px; margin-top: 0; border-width: 0 9px 15px 9px; border-color: transparent transparent #fff transparent; }
+  }
+  @media (max-width: 640px) {
+    .tool span { display: none; }
+    .tool-ranks span { display: inline; }
+  }
+  @media (max-width: 520px) {
+    .site-cards .gcard { flex-direction: column; }
+    .site-cards .art { flex-basis: auto; border-right: 0; border-bottom: 3px dashed var(--ink); }
+    .site-cards .art > svg { min-height: 0; }
+  }
+  @media (max-width: 420px) {
+    .lobby { padding: 20px 14px 28px; }
+    .cast-list { grid-template-columns: 1fr 1fr; gap: 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gcard, .gcard:hover { transform: none; transition: none; }
+  }
+}
+
+/* Animations live outside the scope (CSS does not allow them inside); the prefix keeps their names unique. */
+@keyframes lobby-launch { to { transform: scale(1.06) rotate(0); opacity: 0; } }

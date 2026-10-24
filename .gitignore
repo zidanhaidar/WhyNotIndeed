@@ -1,0 +1,19 @@
+# private settings (the blank template .env.example is kept)
+.env
+.env.*
+!.env.example
+
+# installed packages and build output
+node_modules/
+.next/
+
+# test screenshots and caches
+dev/out/
+__pycache__/
+*.log
+
+# system files
+.DS_Store
+
+# internal notes for the AI assistant, kept on this computer only
+CLAUDE.md
