@@ -1,6 +1,10 @@
-# WNI (Why not, indeed?)
+<p align="center">
+  <img src="docs/wni-logo.svg" alt="WNI logo" width="300">
+</p>
 
-**Fourteen quick games. Four opponents. One panic button.**
+<h1 align="center">Why not, indeed?</h1>
+
+<p align="center"><b>Fourteen quick games. Four opponents. One panic button.</b></p>
 
 WNI is a small collection of browser games for the slow part of the day. Every game is short, playful and a little bit strange: you do not just beat a level, you outsmart an opponent that reacts to what you do. Ten games are puzzles and duels you win or lose; four are endless, where you chase the best score you can until it is game over. The same four robot opponents appear in every game, from a friendly warm-up to one that is billed as impossible. Make an account and every run you finish lands on a shared leaderboard.
 

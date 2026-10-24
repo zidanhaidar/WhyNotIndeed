@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/wni-logo.svg" alt="WNI logo" width="160">
+</p>
+
 # WNI: technical guide and deployment
 
 > **Confidential.** This document describes the technical stack. The public site does not name it (the `/credits` page lists only fonts, data and services). Keep this repository private if the stack should stay private. Neither this file nor `README.md` is served by the website or copied into the Docker image.
