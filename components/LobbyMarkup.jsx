@@ -13,6 +13,7 @@ export default function LobbyMarkup() {
         <div className="tools">
           <button type="button" className="tool" id="btn-music" aria-pressed="false" title="Background music on or off (M)">Music off</button>
           <button type="button" className="tool" id="btn-sound" aria-pressed="false" title="Sound effects on or off">Sound off</button>
+          <button type="button" className="tool" id="btn-volume" title="Volume for WNI only">Volume</button>
           <a className="tool tool-ranks" href="/leaderboard" title="Leaderboard">
             <svg className="ic" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M7 4h10v5a5 5 0 0 1-10 0z" fill="currentColor" />

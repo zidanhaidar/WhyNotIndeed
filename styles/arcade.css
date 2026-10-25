@@ -345,3 +345,24 @@ kbd {
 
 /* the wrapper PageShell renders around each page adds no box of its own */
 .page-root { display: contents; }
+
+/* the Volume panel (Arcade.volumeControl): WNI's own music and sound levels, in each page's dialog colors */
+.arcade-volume {
+  position: fixed;
+  z-index: 58;
+  width: min(300px, calc(100vw - 16px));
+  padding: 12px 14px 12px;
+  border: 3px solid var(--m-ink, #1D1A33);
+  border-radius: 16px;
+  background: var(--m-bg, #fff);
+  color: var(--m-ink, #1D1A33);
+  font: 14px/1.4 var(--m-font, 'Atkinson Hyperlegible', system-ui, sans-serif);
+  box-shadow: 5px 5px 0 var(--m-ink, #1D1A33);
+}
+.arcade-volume .vol-title { margin: 0 0 6px; font: 20px/1.1 var(--m-display, 'Bowlby One', 'Arial Black', sans-serif); }
+.arcade-volume .vol-row { display: grid; grid-template-columns: 1fr 44px; align-items: center; gap: 2px 8px; margin: 0 0 8px; }
+.arcade-volume .vol-name { grid-column: 1 / -1; font-weight: 700; }
+.arcade-volume .vol-name small { font-weight: 700; color: var(--m-soft, #4E4A63); }
+.arcade-volume input[type="range"] { width: 100%; margin: 0; accent-color: var(--m-accent, #1D1A33); cursor: pointer; }
+.arcade-volume .vol-val { text-align: right; font-variant-numeric: tabular-nums; }
+.arcade-volume .vol-note { margin: 2px 0 0; font-size: 12px; color: var(--m-soft, #4E4A63); }

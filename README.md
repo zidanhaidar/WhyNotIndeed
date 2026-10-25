@@ -107,6 +107,7 @@ You guard the office turnstile, and a robot forger slips fake badges into the qu
 |---|---|
 | `B` | Panic button. Swaps the screen for a dull budget spreadsheet, pauses anything running and silences all sound. Press `B` again to come back. |
 | `M` | Music on or off. Every game has its own soundtrack. |
+| Volume button | Opens two sliders, Music and Sound effects, that make WNI louder or quieter without touching your device volume. Your levels are remembered. |
 | `?` | How to play the current game. |
 
 Music and sound effects start off; the **Music** and **Sound** buttons in every game's top bar turn them on. Once on, the music keeps playing as you move around the site: the lobby tune carries on through the leaderboard and your account page, each game's tune fades in when you open it, and every tune picks up where you left it.

@@ -392,6 +392,20 @@ with sync_playwright() as p:
     print('badge check edith:', st, end)
     pg.keyboard.press('Escape'); pg.wait_for_timeout(150)
 
+    # ---- Volume: WNI's own music and sound levels, kept per device, sliders that leave the game alone ----
+    pg.goto(BASE + 'copycat'); pg.wait_for_timeout(500)
+    close_help(pg)
+    pg.click('[data-tool="volume"]'); pg.wait_for_timeout(200)
+    turn0 = pg.evaluate('window.copycat.state.game.turn')
+    for _ in range(3):
+        pg.keyboard.press('ArrowLeft')
+    pg.wait_for_timeout(200)
+    v = pg.evaluate('(() => ({ level: window.Arcade.volume("music"), gain: window.Arcade.audioBus("music").gain.value, turn: window.copycat.state.game.turn }))()')
+    check(abs(v['level'] - 0.65) < 0.001 and abs(v['gain'] - 0.4225) < 0.02 and v['turn'] == turn0, f'volume: the music slider sets the level, the gain follows, the game stays put ({v})')
+    pg.keyboard.press('Escape'); pg.wait_for_timeout(100)
+    check(not pg.evaluate('!!document.querySelector(".arcade-volume")'), 'volume: Escape closes the panel')
+    pg.evaluate('window.Arcade.setVolume("music", 0.8)')
+
     # ---- every game has its own soundtrack, toggled from the top bar ----
     for g in GAMES:
         pg.goto(BASE + g); pg.wait_for_timeout(300)
