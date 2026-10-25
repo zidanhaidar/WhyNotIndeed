@@ -5,7 +5,7 @@ import '@/styles/arcade.css';
 
 export const metadata = {
   title: 'WNI · Why not, indeed?',
-  description: 'WNI: fourteen quick browser games, four opponents and one panic button. Why not, indeed?'
+  description: 'WNI: sixteen quick browser games, four opponents and one panic button. Why not, indeed?'
 };
 
 export const viewport = { width: 'device-width', initialScale: 1 };

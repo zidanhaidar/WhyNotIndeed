@@ -8,7 +8,7 @@ export default function LobbyMarkup() {
             <h1 className="wordmark" data-wni-logo=""></h1>
             <p className="motto"><b className="m-w">W</b>hy <b className="m-n">n</b>ot, <b className="m-i">i</b>ndeed?</p>
           </div>
-          <p className="tagline">Fourteen quick games. Four opponents. One panic button.</p>
+          <p className="tagline">Sixteen quick games. Four opponents. One panic button.</p>
         </div>
         <div className="tools">
           <button type="button" className="tool" id="btn-music" aria-pressed="false" title="Background music on or off (M)">Music off</button>
@@ -49,7 +49,7 @@ export default function LobbyMarkup() {
           <span className="foot-key"><kbd>B</kbd></span>
           <span>Someone walking by? Press B in any game and the screen turns into a boring budget spreadsheet. Press B again to come back. M turns the music on or off.</span>
         </p>
-        <p className="sign" data-wni-logo="compact"><span>WNI stands for <b>Why not, indeed?</b> Fourteen little games for the slow part of the day.</span></p>
+        <p className="sign" data-wni-logo="compact"><span>WNI stands for <b>Why not, indeed?</b> Sixteen little games for the slow part of the day.</span></p>
         <p className="foot-links"><a href="/credits">Credits and licenses</a></p>
       </footer>
     </div>

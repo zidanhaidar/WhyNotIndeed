@@ -19,7 +19,9 @@ const FONTS = [
   ['Limelight', 'Sorkin Type (Nicole Fally)', 'SIL Open Font License 1.1'],
   ['Rye', 'Sorkin Type (Nicole Fally)', 'SIL Open Font License 1.1'],
   ['VT323', 'Peter Hull', 'SIL Open Font License 1.1'],
-  ['Special Elite', 'Astigmatic', 'Apache License 2.0']
+  ['Special Elite', 'Astigmatic', 'Apache License 2.0'],
+  ['Fredoka', 'Milena Brandão (Hafontia)', 'SIL Open Font License 1.1'],
+  ['Silkscreen', 'Jason Kottke', 'SIL Open Font License 1.1']
 ];
 
 export default function CreditsPage() {

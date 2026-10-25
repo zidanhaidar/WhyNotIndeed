@@ -1,0 +1,243 @@
+/* Sudoku: pencil and paper. Graph-paper background, a yellow pencil, soft ink, Fredoka numbers. */
+
+/* Only while this game is on screen: in-app links keep every page's stylesheet loaded, so the scope stops these rules leaking. */
+:where(html:has([data-page='sudoku'])) {
+  &:root {
+    --pencil: #A65E00;
+    --pencil-lo: #7A4400;
+    --lead: #FFE066;
+    --paper: #FFFDF5;
+    --grid-line: #B9C7DD;
+    --ink: #1D1A33;
+    --soft: #4E4A63;
+    --pen: #2F5FD0;
+    --mark: #FF6B57;
+    --display: 'Fredoka', 'Arial Rounded MT Bold', 'Segoe UI', sans-serif;
+
+    --bar-ink: #fff;
+    --bar-muted: #FFE9C2;
+    --bar-line: rgba(255, 255, 255, .45);
+    --bar-well: rgba(0, 0, 0, .2);
+    --bar-hover: rgba(255, 255, 255, .12);
+    --bar-active-bg: var(--lead);
+    --bar-active-ink: var(--ink);
+    --bar-active-muted: #6B5300;
+    --bar-display: var(--display);
+    --bar-focus: var(--lead);
+
+    --m-bg: var(--paper);
+    --m-ink: var(--ink);
+    --m-soft: var(--soft);
+    --m-accent: var(--pencil);
+    --m-accent-ink: #fff;
+    --m-lose: #B3261E;
+    --m-display: var(--display);
+    --m-radius: 18px;
+    --m-backdrop: rgba(40, 24, 0, .55);
+  }
+
+  html& { background: var(--pencil); }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--ink);
+    font: 15px/1.45 var(--bar-font);
+    background:
+      linear-gradient(rgba(255, 255, 255, .09) 1px, transparent 1px) 0 0 / 28px 28px,
+      linear-gradient(90deg, rgba(255, 255, 255, .09) 1px, transparent 1px) 0 0 / 28px 28px,
+      linear-gradient(var(--pencil), var(--pencil-lo));
+  }
+  button { font-family: inherit; }
+  :focus-visible { outline: 4px solid var(--lead); outline-offset: 2px; }
+
+  .notebook {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 330px;
+    gap: 22px;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 4px 24px 12px;
+    align-items: start;
+  }
+
+  /* ---------- the puzzle ---------- */
+
+  .stage { display: flex; flex-direction: column; align-items: center; gap: 12px; min-width: 0; }
+  .paper {
+    position: relative;
+    width: min(100%, calc(100vh - 290px), 560px);
+    min-width: 280px;
+    padding: 12px;
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    background:
+      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / 14px 14px,
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0 / 14px 14px,
+      var(--paper);
+    box-shadow: 7px 7px 0 var(--ink);
+  }
+  .grid {
+    display: grid;
+    /* fixed tracks both ways, so a row without numbers is never squeezed */
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+    grid-template-rows: repeat(9, minmax(0, 1fr));
+    aspect-ratio: 1;
+    border: 3px solid var(--ink);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--ink);
+    gap: 1px;
+    user-select: none;
+  }
+  .grid.hidden .cell { color: transparent !important; }
+  .grid.hidden .cell * { visibility: hidden; }
+  .cell {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    background: #fff;
+    color: var(--ink);
+    font: 600 clamp(16px, 3.6vw, 30px)/1 var(--display);
+    cursor: pointer;
+  }
+  /* thick lines around each 3 x 3 box */
+  .cell.c3, .cell.c6 { margin-left: 2px; }
+  .cell.r3, .cell.r6 { margin-top: 2px; }
+  .cell.given { background: #F4F1E6; }
+  .cell.yours { color: var(--pen); }
+  .cell.peer { background: #FFF6CF; }
+  .cell.given.peer { background: #EFE6BE; }
+  .cell.same { background: #FFE38A; }
+  .cell.sel { background: var(--lead); box-shadow: inset 0 0 0 3px var(--pencil); }
+  /* the yellow selection already shows where the keys go */
+  .cell:focus-visible { outline: none; }
+  .cell.wrong { animation: sudoku-wrong .5s ease; }
+  .cell.done { animation: sudoku-done .6s ease; }
+  .cell .x { color: var(--mark); }
+  .cell.shown { color: #A9A4B8; }
+  .grid.solved .cell { animation: sudoku-done .8s ease both; animation-delay: var(--d, 0s); }
+  .notes { position: absolute; inset: 2px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); }
+  .notes i { display: grid; place-items: center; font: 600 clamp(7px, 1.2vw, 11px)/1 var(--display); font-style: normal; color: var(--soft); }
+
+  .cover {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(84%, 360px);
+    padding: 18px 20px 20px;
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    background: var(--paper);
+    box-shadow: 6px 6px 0 var(--ink);
+    transform: translate(-50%, -50%) rotate(-1.5deg);
+    text-align: center;
+    z-index: 2;
+  }
+  .cover h2 { margin: 0 0 6px; font: 600 30px/1.1 var(--display); color: var(--pencil); }
+  .cover p { margin: 0 0 14px; }
+  .go { padding: 9px 22px 8px; border: 3px solid var(--ink); border-radius: 999px; background: var(--lead); font: 600 20px var(--display); cursor: pointer; box-shadow: 3px 3px 0 var(--ink); }
+  .go:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+  .cue {
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    padding: 6px 18px 5px;
+    border: 3px solid var(--ink);
+    border-radius: 14px;
+    background: var(--lead);
+    font: 600 28px/1.1 var(--display);
+    box-shadow: 4px 4px 0 var(--ink);
+    transform: translate(-50%, -50%) rotate(-3deg);
+    pointer-events: none;
+    z-index: 3;
+    animation: sudoku-cue .3s cubic-bezier(.2, 1.6, .5, 1);
+  }
+  .cue.bad { background: var(--mark); color: #fff; }
+
+  .pad { display: grid; grid-template-columns: repeat(9, 1fr); gap: 6px; width: min(100%, 560px); }
+  .num { position: relative; padding: 8px 0 12px; border: 3px solid var(--ink); border-radius: 12px; background: #fff; font: 600 24px/1 var(--display); cursor: pointer; box-shadow: 3px 3px 0 var(--ink); }
+  .num small { position: absolute; left: 0; right: 0; bottom: 2px; font: 700 10px/1 'Atkinson Hyperlegible', sans-serif; color: var(--soft); }
+  .num:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+  .num.used { opacity: .35; }
+  .notebook.noting .num { background: #FFF6CF; }
+  .tools { display: flex; gap: 10px; width: min(100%, 560px); }
+
+  /* ---------- panel ---------- */
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px 18px;
+    border: 3px solid var(--ink);
+    border-radius: 22px;
+    background: var(--paper);
+    box-shadow: 7px 7px 0 var(--ink);
+  }
+  .who { display: flex; align-items: center; gap: 12px; }
+  .who-face { width: 72px; height: 62px; flex: none; }
+  .who-face svg { width: 100%; height: 100%; display: block; }
+  .who-name { display: block; font: 600 30px/1 var(--display); }
+  .who-rank { font-size: 13px; font-weight: 700; color: var(--soft); }
+  .bubble { position: relative; margin: 0; min-height: 48px; padding: 10px 14px; border: 2.5px solid var(--ink); border-radius: 16px; background: #fff; font-weight: 700; }
+  .bubble::before { content: ""; position: absolute; top: -12px; left: 28px; border: 10px solid transparent; border-top: 0; border-bottom: 12px solid var(--ink); }
+  .bubble.pop { animation: sudoku-bpop .25s ease-out; }
+  .race { display: grid; gap: 8px; }
+  .race-head { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--soft); }
+  .lane { display: grid; grid-template-columns: 58px 1fr 34px; align-items: center; gap: 8px; font-weight: 700; font-size: 13.5px; }
+  .lane b { font: 600 20px/1 var(--display); text-align: right; }
+  .track { height: 16px; border: 2.5px solid var(--ink); border-radius: 999px; background: #fff; overflow: hidden; }
+  .track i { display: block; height: 100%; width: 0; transition: width .3s ease; }
+  .lane.you .track i { background: var(--pen); }
+  .lane.bot .track i { background: var(--bot, #E9B949); }
+  .copy { display: grid; grid-template-columns: 96px 1fr; gap: 4px 12px; align-items: center; }
+  .copy-head { grid-column: 1 / -1; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--soft); }
+  .mini { display: grid; grid-template-columns: repeat(9, 1fr); gap: 1px; padding: 3px; aspect-ratio: 1; border: 2.5px solid var(--ink); border-radius: 8px; background: var(--ink); }
+  .mini i { background: #fff; }
+  .mini i.g { background: #D9D2BC; }
+  .mini i.on { background: var(--bot, #E9B949); }
+  .clock { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; align-items: center; font-size: 13px; font-weight: 700; color: var(--soft); }
+  .clock b { font: 600 26px/1 var(--display); color: var(--ink); }
+  .marks { display: flex; gap: 5px; }
+  .marks i { width: 20px; height: 20px; border: 2.5px solid var(--ink); border-radius: 50%; background: #fff; }
+  .marks i.used { background: var(--mark); }
+  .tips { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+  .tips li { display: flex; gap: 8px; font-size: 13.5px; }
+  .tips li::before { content: ""; flex: none; width: 8px; height: 14px; margin-top: 3px; border: 2px solid var(--ink); border-radius: 2px 2px 6px 6px; background: var(--lead); transform: rotate(20deg); }
+  .acts { display: flex; gap: 8px; }
+  .pill { flex: 1; padding: 8px 12px; border: 2.5px solid var(--ink); border-radius: 999px; background: #fff; font-weight: 700; font-size: 13.5px; cursor: pointer; box-shadow: 2px 2px 0 var(--ink); }
+  .pill:hover { background: #FFF6CF; }
+  .pill:disabled { opacity: .5; cursor: default; }
+  .tool[aria-pressed="true"] { background: var(--lead); }
+  .best { margin: 0; font-size: 13px; font-weight: 700; color: var(--soft); }
+  .arcade-sheet .lead { font-size: 17px; }
+
+  @media (max-width: 980px) {
+    .notebook { grid-template-columns: 1fr; padding: 4px 14px 20px; }
+    .paper { width: min(100%, 560px); }
+    .panel { display: grid; grid-template-columns: 1fr 1fr; }
+    .tips, .acts, .best, .bubble { grid-column: 1 / -1; }
+  }
+  @media (max-width: 560px) {
+    .panel { display: flex; }
+    .paper { padding: 6px; min-width: 0; }
+    .num { font-size: 19px; padding: 7px 0 11px; border-radius: 9px; }
+    .pad { gap: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cell.wrong, .cell.done, .cue, .bubble.pop { animation: none; }
+  }
+}
+
+/* Animations live outside the scope (CSS does not allow them inside); the prefix keeps their names unique. */
+@keyframes sudoku-wrong { 0%, 100% { background: #fff; } 30% { background: #FFB3A8; transform: translateX(-3px); } 60% { transform: translateX(3px); } }
+
+@keyframes sudoku-done { 40% { background: #C9F2D6; } }
+
+@keyframes sudoku-cue { from { transform: translate(-50%, -50%) rotate(-3deg) scale(1.7); opacity: 0; } }
+
+@keyframes sudoku-bpop { from { transform: scale(.95); opacity: .4; } }

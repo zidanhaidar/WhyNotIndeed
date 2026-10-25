@@ -21,7 +21,7 @@ For what WNI is and how the games are played, see [README.md](README.md).
 | Database driver | node-postgres (`pg`) | 8.23.1 |
 | Containers | Docker with Docker Compose | Compose v2 or newer |
 | Music and sound | Web Audio API in the browser, generated from code (no audio files) | |
-| Fonts | 15 Google Fonts, self-hosted as `woff2` files (Latin subset) | |
+| Fonts | 17 Google Fonts, self-hosted as `woff2` files (Latin subset) | |
 | Outside service | Datamuse word API (Sneaky Hangman's word lists, cached weekly) | |
 
 There are no other runtime dependencies: no CSS framework, no UI kit, no analytics, no external scripts.
@@ -171,6 +171,8 @@ What cannot be hidden completely: a technical visitor can still recognise the fr
 | Rye | Cable Spaghetti | Sorkin Type (Nicole Fally) | SIL OFL 1.1 |
 | VT323 | Don't Click That | Peter Hull | SIL OFL 1.1 |
 | Special Elite | Badge Check | Astigmatic | Apache 2.0 |
+| Fredoka | Sudoku | Milena Brandão (Hafontia) | SIL OFL 1.1 |
+| Silkscreen | Minesweeper | Jason Kottke | SIL OFL 1.1 |
 | Next.js, React, React DOM, Scheduler, styled-jsx | Pages and UI (sent to browsers) | Vercel; Meta Platforms and contributors | MIT (notices in `public/legal/notices.txt`) |
 | @swc/helpers | Compiled code helpers (sent to browsers) | SWC contributors | Apache 2.0 (in `public/legal/notices.txt`) |
 | node-postgres (`pg`) | Database driver (server only) | Brian Carlson and contributors | MIT |
@@ -185,9 +187,9 @@ Run from the project folder. The Python checks need `pip install playwright` and
 
 | Command | What it checks |
 |---|---|
-| `python dev/check_all_games.py` | Lobby, site pages (the Credits page must name no software and leave no gaps between cards) and all 14 games in a headless browser: plays a little, WNI dialogs instead of native ones, panic button pauses games and silences music, every soundtrack toggles, links keep the music going, styles never leak between pages, no sideways scrolling at phone width. |
+| `python dev/check_all_games.py` | Lobby, site pages (the Credits page must name no software and leave no gaps between cards) and all 16 games in a headless browser: plays a little, WNI dialogs instead of native ones, panic button pauses games and silences music, every soundtrack toggles, links keep the music going, styles never leak between pages, no sideways scrolling at phone width. |
 | `python dev/check_online.py` | Accounts and leaderboard end to end. Creates a throwaway `test_...` account (delete with `docker compose exec db psql -U wni -d wni -c "DELETE FROM users WHERE username LIKE 'test\_%'"`). |
-| `node dev/balance_<game>.js` | Plays a game thousands of times with scripted players to prove every level, Edith included, is winnable and that levels get harder in order. For the four endless games (`balance_going_up.js`, `balance_cable_spaghetti.js`, `balance_dont_click_that.js`, `balance_badge_check.js`) it proves a good player usually earns the first star on every level, a careless one does clearly worse, and every run ends. |
+| `node dev/balance_<game>.js` | Plays a game thousands of times with scripted players to prove every level, Edith included, is winnable and that levels get harder in order. For the four endless games (`balance_going_up.js`, `balance_cable_spaghetti.js`, `balance_dont_click_that.js`, `balance_badge_check.js`) it proves a good player usually earns the first star on every level, a careless one does clearly worse, and every run ends. Sudoku (`balance_sudoku.js`) and Minesweeper (`balance_minesweeper.js`) also prove every generated puzzle has exactly one answer, every field can be cleared without guessing, and each level's puzzles need the techniques that level promises. |
 
 ## 10. Troubleshooting
 

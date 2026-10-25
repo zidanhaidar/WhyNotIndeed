@@ -17,7 +17,7 @@ BASE = os.environ.get('WNI_BASE') or 'http://localhost:8080/'
 LEVELS = ['pip', 'gridlock', 'monolith', 'edith']
 GAMES = ['bury-the-bot', 'fool-the-model', 'excel-dungeon',
          'sock-trap', 'spot-kick', 'sneaky-hangman', 'herd-instinct', 'coffee-spill', 'copycat', 'echo',
-         'going-up', 'cable-spaghetti', 'dont-click-that', 'badge-check']
+         'going-up', 'cable-spaghetti', 'dont-click-that', 'badge-check', 'sudoku', 'minesweeper']
 errs = []
 
 
@@ -65,8 +65,8 @@ with sync_playwright() as p:
     pg.goto(BASE); pg.wait_for_timeout(500)
     cards = pg.evaluate('document.querySelectorAll(".gcard").length')
     print('lobby cards:', cards)
-    check(cards == 16, 'lobby should show 14 games plus the leaderboard and account cards')
-    check(pg.evaluate('document.querySelectorAll("#cards .gcard").length') == 14 and pg.evaluate('document.querySelectorAll(".board-row #site-cards .gcard").length') == 2,
+    check(cards == 18, 'lobby should show 16 games plus the leaderboard and account cards')
+    check(pg.evaluate('document.querySelectorAll("#cards .gcard").length') == 16 and pg.evaluate('document.querySelectorAll(".board-row #site-cards .gcard").length') == 2,
           'the leaderboard and account cards sit in their own section, apart from the games')
     check(pg.evaluate('document.querySelectorAll("#cards .key").length') == 10, 'number-key badges on the first ten games only')
     pg.screenshot(path=OUT + 'lobby.png', full_page=True)
@@ -392,6 +392,97 @@ with sync_playwright() as p:
     print('badge check edith:', st, end)
     pg.keyboard.press('Escape'); pg.wait_for_timeout(150)
 
+    # ---- Sudoku ----
+    pg.goto(BASE + 'sudoku'); pg.wait_for_timeout(400)
+    close_help(pg)
+    for lv in LEVELS:
+        pg.click(f'.lvl[data-level="{lv}"]'); pg.wait_for_timeout(150)
+    check(pg.evaluate('document.querySelector("#grid").classList.contains("hidden")'), 'sudoku: the puzzle stays hidden until you start')
+    pg.keyboard.press('Enter'); pg.wait_for_timeout(200)
+    check(not pg.evaluate('document.querySelector("#grid").classList.contains("hidden")'), 'sudoku: Enter starts and shows the puzzle')
+    empties = pg.evaluate('(() => { const g = window.sudokuGame.state.g; return g.values.map((v, i) => v ? -1 : i).filter((i) => i >= 0); })()')
+    for i in empties[:5]:
+        pg.click(f'.cell[data-i="{i}"]')
+        pg.keyboard.press(str(pg.evaluate(f'window.sudokuGame.state.g.solution[{i}]')))
+    pg.wait_for_timeout(100)
+    st = pg.evaluate('(() => { const g = window.sudokuGame.state.g; return { filled: g.filled, mistakes: g.mistakes }; })()')
+    check(st['filled'] == 5 and st['mistakes'] == 0, f'sudoku: five right numbers from clicks and keys ({st})')
+    i = empties[5]
+    pg.click(f'.cell[data-i="{i}"]')
+    right = pg.evaluate(f'window.sudokuGame.state.g.solution[{i}]')
+    pg.keyboard.press(str(right % 9 + 1)); pg.wait_for_timeout(100)
+    st = pg.evaluate(f'(() => {{ const g = window.sudokuGame.state.g; return {{ mistakes: g.mistakes, value: g.values[{i}] }}; }})()')
+    check(st['mistakes'] == 1 and st['value'] == 0, f'sudoku: a wrong number is a mistake and does not stay ({st})')
+    pg.keyboard.press('Shift+Digit' + str(right)); pg.wait_for_timeout(100)
+    check(pg.evaluate(f'window.sudokuGame.state.g.notes[{i}]') == 1 << (right - 1), 'sudoku: Shift and a number pencils a note')
+    pg.keyboard.press('Space'); pg.click('.num[data-d="' + str(right % 9 + 1) + '"]'); pg.keyboard.press('Space'); pg.wait_for_timeout(100)
+    check(pg.evaluate(f'window.sudokuGame.state.g.notes[{i}]') == (1 << (right - 1)) | (1 << (right % 9)) and pg.evaluate('window.sudokuGame.state.g.mistakes') == 1, 'sudoku: notes mode turns the number pad into notes')
+    pg.wait_for_timeout(1200)
+    t1 = pg.evaluate('window.sudokuGame.state.g.t')
+    pg.keyboard.press('p'); pg.wait_for_timeout(500)
+    check(pg.evaluate('document.querySelector("#grid").classList.contains("hidden")') and abs(pg.evaluate('window.sudokuGame.state.g.t') - t1) < 0.2, 'sudoku: pausing stops the clock and hides the grid')
+    pg.keyboard.press('p'); pg.wait_for_timeout(300)
+    pg.keyboard.press('b'); t2 = pg.evaluate('window.sudokuGame.state.g.t'); pg.wait_for_timeout(500)
+    check(t1 > 0.8 and pg.evaluate('window.sudokuGame.state.g.t') == t2, 'sudoku runs, and pauses under the panic screen')
+    pg.keyboard.press('b'); pg.wait_for_timeout(100)
+    pg.screenshot(path=OUT + 'sudoku.png')
+    pg.evaluate('(() => { const S = window.sudokuGame.state, g = S.g; for (let k = 0; k < 81; k++) if (!g.values[k]) { window.sudokuGame.select(k); window.sudokuGame.write(g.solution[k]); } })()')
+    wait_until(pg, '!!document.querySelector(".arcade-modal:not([hidden]) .arcade-sheet h2")')
+    end = pg.evaluate('(() => { const g = window.sudokuGame.state.g; return { result: g.result, points: g.points(), title: document.querySelector(".arcade-sheet h2").textContent }; })()')
+    check(end['result'] == 'win' and end['points'] > 500, f'sudoku: a full grid wins ({end})')
+    spread = pg.evaluate('(sel) => { const r = [...document.querySelectorAll(sel)].map((e) => e.getBoundingClientRect()); const w = r.map((x) => x.width), h = r.map((x) => x.height); return [Math.max(...w) - Math.min(...w), Math.max(...h) - Math.min(...h)].map((v) => Math.round(v * 10) / 10); }', '.cell')
+    check(spread[0] <= 2.5 and spread[1] <= 2.5, f'sudoku: squares stay the same size, apart from the 2 px box lines (spread {spread} px)')
+    pg.screenshot(path=OUT + 'sudoku_win.png')
+    print('sudoku edith:', end)
+    pg.keyboard.press('Escape'); pg.wait_for_timeout(150)
+
+    # ---- Minesweeper ----
+    pg.goto(BASE + 'minesweeper'); pg.wait_for_timeout(400)
+    close_help(pg)
+    for lv in LEVELS:
+        pg.click(f'.lvl[data-level="{lv}"]'); pg.wait_for_timeout(150)
+    mid = pg.evaluate('(() => { const g = window.minesweeperGame.state.g; return (g.h >> 1) * g.w + (g.w >> 1); })()')
+    pg.click(f'.sq[data-i="{mid}"]'); pg.wait_for_timeout(200)
+    st = pg.evaluate('(() => { const g = window.minesweeperGame.state.g; return { started: g.started, opened: g.opened(), over: g.over }; })()')
+    check(st['started'] and st['opened'] > 1 and not st['over'], f'minesweeper: the first click is safe and opens an area ({st})')
+    # play by the numbers with the mouse: left click opens, right click flags
+    for _ in range(6):
+        mv = pg.evaluate('(() => { const m = window.minesweeperGame.state.g.sweep.deduce(); return m && { type: m.type, cell: m.cells[0] }; })()')
+        if not mv:
+            break
+        pg.click(f'.sq[data-i="{mv["cell"]}"]', button='right' if mv['type'] == 'flag' else 'left')
+        pg.wait_for_timeout(60)
+    st = pg.evaluate('(() => { const g = window.minesweeperGame.state.g; return { opened: g.opened(), flags: g.flags(), over: g.over }; })()')
+    check(not st['over'] and st['opened'] > 1, f'minesweeper: digging and flagging by the numbers stays safe ({st})')
+    pg.wait_for_timeout(1000)
+    t1 = pg.evaluate('window.minesweeperGame.state.g.t')
+    pg.keyboard.press('p'); pg.wait_for_timeout(400)
+    check(pg.evaluate('document.querySelector("#board").classList.contains("hidden")') and abs(pg.evaluate('window.minesweeperGame.state.g.t') - t1) < 0.2, 'minesweeper: pausing stops the clock and hides the field')
+    pg.keyboard.press('p'); pg.wait_for_timeout(200)
+    pg.keyboard.press('b'); t2 = pg.evaluate('window.minesweeperGame.state.g.t'); pg.wait_for_timeout(500)
+    check(t1 > 0.8 and pg.evaluate('window.minesweeperGame.state.g.t') == t2, 'minesweeper runs, and pauses under the panic screen')
+    pg.keyboard.press('b'); pg.wait_for_timeout(100)
+    pg.screenshot(path=OUT + 'minesweeper.png')
+    pg.evaluate('''(() => { const M = window.minesweeperGame, g = M.state.g;
+        for (let m = g.sweep.deduce(); m && !g.over; m = g.sweep.deduce()) m.cells.forEach((c) => (m.type === 'flag' ? M.flag(c) : M.dig(c))); })()''')
+    wait_until(pg, '!!document.querySelector(".arcade-modal:not([hidden]) .arcade-sheet h2")')
+    end = pg.evaluate('(() => { const g = window.minesweeperGame.state.g; return { result: g.result, points: g.points(), title: document.querySelector(".arcade-sheet h2").textContent }; })()')
+    check(end['result'] == 'win' and end['points'] > 500, f'minesweeper: clearing the field by logic alone wins ({end})')
+    pg.wait_for_timeout(900)   # let the opening animation finish, it scales squares while it plays
+    spread = pg.evaluate('(sel) => { const r = [...document.querySelectorAll(sel)].map((e) => e.getBoundingClientRect()); const w = r.map((x) => x.width), h = r.map((x) => x.height); return [Math.max(...w) - Math.min(...w), Math.max(...h) - Math.min(...h)].map((v) => Math.round(v * 10) / 10); }', '.sq')
+    check(spread[0] <= 0.6 and spread[1] <= 0.6, f'minesweeper: every square keeps the same size with numbers and flags on the field (spread {spread} px)')
+    pg.screenshot(path=OUT + 'minesweeper_win.png')
+    pg.keyboard.press('Escape'); pg.wait_for_timeout(150)
+    pg.keyboard.press('n'); pg.wait_for_timeout(150)
+    pg.click(f'.sq[data-i="{mid}"]'); pg.wait_for_timeout(150)
+    boom = pg.evaluate('window.minesweeperGame.state.g.field.mine.indexOf(1)')
+    pg.click(f'.sq[data-i="{boom}"]')
+    wait_until(pg, '!!document.querySelector(".arcade-modal:not([hidden]) .arcade-sheet h2")')
+    lost = pg.evaluate('(() => { const g = window.minesweeperGame.state.g; return { result: g.result, reason: g.reason }; })()')
+    check(lost['result'] == 'lose' and lost['reason'] == 'mine', f'minesweeper: opening a mine loses ({lost})')
+    print('minesweeper edith:', end, lost)
+    pg.keyboard.press('Escape'); pg.wait_for_timeout(150)
+
     # ---- Volume: WNI's own music and sound levels, kept per device, sliders that leave the game alone ----
     pg.goto(BASE + 'copycat'); pg.wait_for_timeout(500)
     close_help(pg)
@@ -436,7 +527,7 @@ with sync_playwright() as p:
     check(alive(), 'the leaderboard link should keep the same page (no reload)')
     check(bool(after) and after['tune'] == 'lobby' and after['step'] >= before['step'] + 3, f'the lobby tune should carry on into the leaderboard ({before} -> {after})')
     pg.click('.site-home')
-    wait_until(pg, 'location.pathname === "/" && document.querySelectorAll(".gcard").length === 16')
+    wait_until(pg, 'location.pathname === "/" && document.querySelectorAll(".gcard").length === 18')
     pg.wait_for_timeout(1000)
     back = pg.evaluate('window.Arcade.music.now()')
     check(alive() and bool(back) and back['tune'] == 'lobby' and back['step'] >= after['step'] + 3, f'the lobby tune should still be going back in the lobby ({after} -> {back})')
@@ -448,7 +539,7 @@ with sync_playwright() as p:
     left_bar = pg.evaluate('JSON.parse(sessionStorage.getItem("arcade-music-spot")).lobby')
     pg.wait_for_timeout(1500)
     pg.go_back()
-    wait_until(pg, 'location.pathname === "/" && document.querySelectorAll(".gcard").length === 16')
+    wait_until(pg, 'location.pathname === "/" && document.querySelectorAll(".gcard").length === 18')
     wait_until(pg, 'window.Arcade.music.now() && window.Arcade.music.now().tune === "lobby"')
     resumed = pg.evaluate('window.Arcade.music.now()')
     check(alive() and left_bar >= 2 and resumed['step'] >= left_bar * 8, f'the lobby tune should pick up at bar {left_bar}, not the start ({resumed})')

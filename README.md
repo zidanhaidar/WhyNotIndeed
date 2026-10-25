@@ -4,9 +4,9 @@
 
 <h1 align="center">Why not, indeed?</h1>
 
-<p align="center"><b>Fourteen quick games. Four opponents. One panic button.</b></p>
+<p align="center"><b>Sixteen quick games. Four opponents. One panic button.</b></p>
 
-WNI is a small collection of browser games for the slow part of the day. Every game is short, playful and a little bit strange: you do not just beat a level, you outsmart an opponent that reacts to what you do. Ten games are puzzles and duels you win or lose; four are endless, where you chase the best score you can until it is game over. The same four robot opponents appear in every game, from a friendly warm-up to one that is billed as impossible. Make an account and every run you finish lands on a shared leaderboard.
+WNI is a small collection of browser games for the slow part of the day. Every game is short, playful and a little bit strange: you do not just beat a level, you outsmart an opponent that reacts to what you do. Twelve games are puzzles and duels you win or lose; four are endless, where you chase the best score you can until it is game over. The same four robot opponents appear in every game, from a friendly warm-up to one that is billed as impossible. Make an account and every run you finish lands on a shared leaderboard.
 
 And if someone walks past your desk, press **B**: the screen turns into a dull budget spreadsheet.
 
@@ -24,6 +24,7 @@ Open the site and pick a game card in the lobby, or go straight to a game's addr
 | `/bury-the-bot`, `/fool-the-model`, `/excel-dungeon`, `/sock-trap`, `/spot-kick` | Games 1 to 5 |
 | `/sneaky-hangman`, `/herd-instinct`, `/coffee-spill`, `/copycat`, `/echo` | Games 6 to 10 |
 | `/going-up`, `/cable-spaghetti`, `/dont-click-that`, `/badge-check` | Games 11 to 14 (endless) |
+| `/sudoku`, `/minesweeper` | Games 15 and 16 |
 | `/leaderboard` | Rankings, per game or all games, filtered by opponent |
 | `/account` | Log in, sign up, and your best runs |
 | `/credits` | Credits and licenses |
@@ -101,6 +102,14 @@ A robot has taken over the office computer's mouse and wants to click the big re
 You guard the office turnstile, and a robot forger slips fake badges into the queue. A real badge gets five things right: the photo is the person in front of you, the name is in the staff directory exactly as spelled, the floor matches that department in the floor chart, its valid-until date (year included) is not before today, and it carries this week's stamp. Today is the date on your own computer, and a badge still counts on its last day. Let the real coworkers in and stop the fakes before the timer runs out; the timer gets shorter as the queue grows. Three mistakes (a fake let in, a real coworker turned away, or too slow) end the shift. The forger learns which details slip past you; Edith also notices when you decide in a hurry and fakes the details that take longest to check.
 **Keys:** `←` or `S` stop, `→` or `L` let in, `Enter` start, `P` pause (the badge hides while paused), `N` new shift.
 
+### 15. Sudoku
+The classic number puzzle: fill the grid so every row, column and 3 by 3 box holds the numbers 1 to 9 once each. Every puzzle is freshly made, has exactly one answer and can be solved without guessing. The twist: the robot gets an identical copy and solves it beside you, one square at a time, and you can watch its progress. Finish before it does. A wrong number does not stay but counts as a mistake, and three mistakes end the game. Pip and Ted's puzzles fall to simple logic (the only number that fits, the only place a number can go); Excel and Edith start with fewer numbers and need the clever tricks too, like pairs and numbers boxed into one row. Edith is the fastest pencil in the office and never makes a mistake.
+**Keys:** `1` to `9` write a number, `Shift` and a number pencil a note, `Space` notes mode, `Delete` or `0` clear notes, arrows move, `Enter` start, `P` pause (the grid hides while paused), `N` new puzzle.
+
+### 16. Minesweeper
+The classic minefield: open every square that is not a mine. A number tells you how many mines touch that square. Your first square is always safe and opens an area, and every field can be cleared by logic alone, so you never have to guess. The robot gets an identical field and starts sweeping the moment you open your first square; clear yours before it clears its own. Opening a mine ends the game. Fields grow from 9 by 9 with 10 mines (Pip) to 16 by 16 with 44 mines (Edith). Pip sometimes clicks without thinking and can blow itself up; the others never guess, and Edith hardly bothers to plant a flag.
+**Keys:** click to open (or click a number whose mines are all flagged to open around it), right click or hold to flag, arrows move the cursor, `Space` or `Enter` open, `F` flag, `P` pause (the field hides while paused), `N` new field. On a touch screen, the "Tapping digs" button switches taps to flags.
+
 ## Everywhere
 
 | Key | What it does |
@@ -117,7 +126,7 @@ Music and sound effects start off; the **Music** and **Sound** buttons in every 
 - **Sign up** with a username, email and password. **Log in** with your email or your username, plus your password (capitals do not matter).
 - Every run you finish scores points: the game's own score, multiplied by the opponent (Pip x1, Ted x2, Excel x3, Edith x5).
 - Finished a run before logging in? Log in within 30 minutes and that run is saved for you.
-- The leaderboard ranks everyone's best run in each game, or adds up each player's best across all fourteen games, and can be filtered by opponent.
+- The leaderboard ranks everyone's best run in each game, or adds up each player's best across all sixteen games, and can be filtered by opponent.
 
 | Game | How its points are earned |
 |---|---|
@@ -135,6 +144,8 @@ Music and sound effects start off; the **Music** and **Sound** buttons in every 
 | Cable Spaghetti | 10 per device plugged in, and 5 more for each neat cable (the shortest one possible). |
 | Don't Click That | 10 per second you hold the pointer off, and 100 per file still on the desktop at every backup (every 30 seconds). |
 | Badge Check | 10 per correct call, 2 more per call in your current streak (up to 20), and 5 more for a quick call (with half the timer left). |
+| Sudoku | 8 per square you fill, and for finishing first 500, plus 3 per second ahead of the robot and 100 per unused mistake. |
+| Minesweeper | 2 per safe square you open, and for clearing first 500 plus 2 per second ahead of the robot. |
 
 ## Credits
 

@@ -29,7 +29,9 @@ const PAGES = {
   'going-up': () => import('@/games/going-up/game.js'),
   'cable-spaghetti': () => import('@/games/cable-spaghetti/game.js'),
   'dont-click-that': () => import('@/games/dont-click-that/game.js'),
-  'badge-check': () => import('@/games/badge-check/game.js')
+  'badge-check': () => import('@/games/badge-check/game.js'),
+  sudoku: () => import('@/games/sudoku/game.js'),
+  minesweeper: () => import('@/games/minesweeper/game.js')
 };
 
 function PageShell({ page, children }) {

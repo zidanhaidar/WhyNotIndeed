@@ -13,6 +13,8 @@ Under the SIL Open Font License, Version 1.1:
   Limelight: Copyright (c) 2011 by Sorkin Type Co (www.sorkintype.com), with Reserved Font Name "Limelight".
   Rye: Copyright (c) 2011 by Sorkin Type Co (www.sorkintype.com), with Reserved Font Name "Rye".
   VT323: Copyright 2011, The VT323 Project Authors (peter.hull@oikoi.com)
+  Fredoka: Copyright 2016 The Fredoka Project Authors (https://github.com/hafontia/Fredoka-One)
+  Silkscreen: Copyright 2001 The Silkscreen Project Authors (https://github.com/googlefonts/silkscreen)
 
 Under the Apache License, Version 2.0:
   Chewy: Copyright (c) 2010 by Font Diner, Inc DBA Sideshow. All rights reserved.
