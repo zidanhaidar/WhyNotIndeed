@@ -1,0 +1,70 @@
+/* Harbor Master: a harbor from above. Deep-sea blue frame, lifebuoy orange, Staatliches lettering. The layout is shared (games/shared/yard.css). */
+
+/* Only while this game is on screen: in-app links keep every page's stylesheet loaded, so the scope stops these rules leaking. */
+:where(html:has([data-page='harbor-master'])) {
+  &:root {
+    --bg: #1E5470;
+    --bg-lo: #12364A;
+    --hi: #FF9F1C;
+    --alert: #E5483A;
+    --paper: #F6FBFF;
+    --field: #3FA7D6;
+    --ink: #1D1A33;
+    --soft: #4E4A63;
+    --display: 'Staatliches', 'Arial Narrow', sans-serif;
+
+    --bar-ink: #fff;
+    --bar-muted: #D2E6F0;
+    --bar-line: rgba(255, 255, 255, .4);
+    --bar-well: rgba(0, 0, 0, .22);
+    --bar-hover: rgba(255, 255, 255, .1);
+    --bar-active-bg: var(--hi);
+    --bar-active-ink: var(--ink);
+    --bar-active-muted: #5A3300;
+    --bar-display: var(--display);
+    --bar-focus: var(--hi);
+
+    --m-bg: var(--paper);
+    --m-ink: var(--ink);
+    --m-soft: var(--soft);
+    --m-accent: var(--bg);
+    --m-accent-ink: #fff;
+    --m-lose: #B3261E;
+    --m-display: var(--display);
+    --m-radius: 16px;
+    --m-backdrop: rgba(8, 24, 36, .62);
+  }
+
+  html& { background: var(--bg); }
+  body {
+    margin: 0;
+    color: var(--ink);
+    font: 15px/1.45 var(--bar-font);
+    background:
+      radial-gradient(ellipse at 50% 120%, rgba(63, 167, 214, .35), transparent 60%),
+      repeating-radial-gradient(circle at 0 0, rgba(255, 255, 255, .04) 0 2px, transparent 2px 22px),
+      linear-gradient(var(--bg), var(--bg-lo));
+    background-attachment: fixed;
+  }
+  .acts .wide { grid-column: 1 / -1; }
+
+  /* the helm: rudder gauge, engine telegraph and their buttons */
+  .helm { display: grid; gap: 5px; padding: 8px 10px 10px; border: 2.5px solid var(--ink); border-radius: 12px; background: #fff; }
+  .gauge {
+    position: relative; justify-self: center; width: 110px; height: 56px; overflow: hidden;
+    border-radius: 56px 56px 0 0; border: 2.5px solid var(--ink); border-bottom: 0;
+    background: conic-gradient(from -90deg at 50% 100%, #E5483A 0 35deg, #F3F0E8 35deg 145deg, #2FBF71 145deg 180deg, transparent 180deg);
+  }
+  .gauge i { position: absolute; left: calc(50% - 2px); bottom: 0; width: 4px; height: 48px; background: var(--ink); border-radius: 2px; transform-origin: 50% 100%; transition: transform .1s linear; }
+  .helm-text { font-size: 12.5px; font-weight: 700; color: var(--soft); text-align: center; }
+  .helm-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
+  .helm-row .pill { padding: 6px 2px; font-size: 11.5px; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .tele { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin-top: 4px; }
+  .tele i { padding: 3px 2px; border: 2px solid var(--ink); border-radius: 6px; background: #EEF3F7; font: 400 10.5px/1.1 var(--display); letter-spacing: .02em; text-align: center; font-style: normal; cursor: pointer; }
+  .tele i:nth-child(-n+2).on { background: #FFD2C2; }
+  .tele i:nth-child(3).on { background: #FFE9A3; }
+  .tele i:nth-child(n+4).on { background: #C9F2D9; }
+  .tele i.on { box-shadow: inset 0 -3px 0 var(--ink); }
+  .cargo { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; min-height: 20px; padding-top: 4px; border-top: 2px dashed rgba(29, 26, 51, .2); font-size: 12.5px; font-weight: 700; color: var(--soft); }
+  .cargo span { margin-left: auto; }
+}

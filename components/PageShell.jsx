@@ -31,7 +31,11 @@ const PAGES = {
   'dont-click-that': () => import('@/games/dont-click-that/game.js'),
   'badge-check': () => import('@/games/badge-check/game.js'),
   sudoku: () => import('@/games/sudoku/game.js'),
-  minesweeper: () => import('@/games/minesweeper/game.js')
+  minesweeper: () => import('@/games/minesweeper/game.js'),
+  'level-crossing': () => import('@/games/level-crossing/game.js'),
+  'cleared-to-land': () => import('@/games/cleared-to-land/game.js'),
+  'rush-hour': () => import('@/games/rush-hour/game.js'),
+  'harbor-master': () => import('@/games/harbor-master/game.js')
 };
 
 function PageShell({ page, children }) {

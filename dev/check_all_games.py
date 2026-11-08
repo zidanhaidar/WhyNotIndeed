@@ -17,7 +17,7 @@ BASE = os.environ.get('WNI_BASE') or 'http://localhost:8080/'
 LEVELS = ['pip', 'gridlock', 'monolith', 'edith']
 GAMES = ['bury-the-bot', 'fool-the-model', 'excel-dungeon',
          'sock-trap', 'spot-kick', 'sneaky-hangman', 'herd-instinct', 'coffee-spill', 'copycat', 'echo',
-         'going-up', 'cable-spaghetti', 'dont-click-that', 'badge-check', 'sudoku', 'minesweeper']
+         'going-up', 'cable-spaghetti', 'dont-click-that', 'badge-check', 'sudoku', 'minesweeper', 'level-crossing', 'cleared-to-land', 'rush-hour', 'harbor-master']
 errs = []
 
 
@@ -65,8 +65,8 @@ with sync_playwright() as p:
     pg.goto(BASE); pg.wait_for_timeout(500)
     cards = pg.evaluate('document.querySelectorAll(".gcard").length')
     print('lobby cards:', cards)
-    check(cards == 18, 'lobby should show 16 games plus the leaderboard and account cards')
-    check(pg.evaluate('document.querySelectorAll("#cards .gcard").length') == 16 and pg.evaluate('document.querySelectorAll(".board-row #site-cards .gcard").length') == 2,
+    check(cards == 22, 'lobby should show 20 games plus the leaderboard and account cards')
+    check(pg.evaluate('document.querySelectorAll("#cards .gcard").length') == 20 and pg.evaluate('document.querySelectorAll(".board-row #site-cards .gcard").length') == 2,
           'the leaderboard and account cards sit in their own section, apart from the games')
     check(pg.evaluate('document.querySelectorAll("#cards .key").length') == 10, 'number-key badges on the first ten games only')
     pg.screenshot(path=OUT + 'lobby.png', full_page=True)
@@ -481,6 +481,154 @@ with sync_playwright() as p:
     lost = pg.evaluate('(() => { const g = window.minesweeperGame.state.g; return { result: g.result, reason: g.reason }; })()')
     check(lost['result'] == 'lose' and lost['reason'] == 'mine', f'minesweeper: opening a mine loses ({lost})')
     print('minesweeper edith:', end, lost)
+
+    # ---- Level Crossing ----
+    pg.goto(BASE + 'level-crossing'); pg.wait_for_timeout(500)
+    close_help(pg)
+    for lv in LEVELS:
+        level(pg, lv)
+    LC = 'window.levelCrossing'
+    fits = pg.evaluate('[document.documentElement.scrollWidth <= innerWidth, document.documentElement.scrollHeight <= innerHeight]')
+    check(fits[0] and fits[1], f'level crossing: the railway fills the screen with no scrolling at 1366 x 768 ({fits})')
+    check(pg.evaluate(LC + '.state.w.map.stations.length') == 4 and pg.evaluate(LC + '.state.w.trains.length') == 2, 'level crossing: Edith has four stations and two trains to drive')
+    seed1 = pg.evaluate(LC + '.state.w.map.edges.map((e) => e.len.toFixed(2)).join()')
+    pg.click('#btn-new'); pg.wait_for_timeout(200)
+    check(pg.evaluate(LC + '.state.w.map.edges.map((e) => e.len.toFixed(2)).join()') != seed1, 'level crossing: a new map is drawn every time')
+    # Enter on the focused New map button would draw yet another map, so let go of it first
+    pg.evaluate('document.activeElement && document.activeElement.blur()')
+    pg.keyboard.press('Enter'); pg.wait_for_timeout(200)
+    check(pg.evaluate('document.querySelector("#start-card").hidden'), 'level crossing: Enter opens the line')
+    ctl = pg.evaluate(LC + '.controls()')
+    pg.mouse.click(ctl['trains'][0][0], ctl['trains'][0][1]); pg.wait_for_timeout(1500)
+    tr = pg.evaluate('(() => { const t = window.levelCrossing.state.w.trains[0]; return { want: t.want, odo: t.odo }; })()')
+    check(tr['want'] == 'go' and tr['odo'] > 0.5, f'level crossing: clicking a train sends it off ({tr})')
+    pg.keyboard.press('q'); pg.wait_for_timeout(100)
+    check(pg.evaluate(LC + '.state.w.trains[0].want') == 'stop', 'level crossing: Q brakes train 1')
+    pg.keyboard.press('w'); pg.wait_for_timeout(100)
+    check(pg.evaluate(LC + '.state.w.trains[1].want') == 'go', 'level crossing: W sends train 2')
+    ctl = pg.evaluate(LC + '.controls()')
+    pg.mouse.click(ctl['crossings'][0][0], ctl['crossings'][0][1]); pg.wait_for_timeout(150)
+    check(pg.evaluate(LC + '.state.w.map.crossings[0].down'), 'level crossing: clicking the crossing sign lowers the barriers')
+    pg.keyboard.press('1'); pg.wait_for_timeout(100)
+    check(not pg.evaluate(LC + '.state.w.map.crossings[0].down'), 'level crossing: key 1 raises them again')
+    sw = ctl['switches'][0]
+    before = pg.evaluate(f'{LC}.state.w.map.nodes[{sw["id"]}].state')
+    pg.mouse.click(sw['at'][0], sw['at'][1]); pg.wait_for_timeout(150)
+    after = pg.evaluate(f'{LC}.state.w.map.nodes[{sw["id"]}].state')
+    busy = pg.evaluate(f'{LC}.state.w.switchBusy({sw["id"]})')
+    check(after != before or busy, f'level crossing: clicking a switch flips it ({before} -> {after}, busy {busy})')
+    pg.mouse.click(ctl['signals'][0][0], ctl['signals'][0][1]); pg.wait_for_timeout(150)
+    check(pg.evaluate(LC + '.state.w.map.stations[0].red'), 'level crossing: clicking a signal turns it red')
+    pg.keyboard.press('z'); pg.wait_for_timeout(100)
+    check(not pg.evaluate(LC + '.state.w.map.stations[0].red'), 'level crossing: Z turns it green again')
+    pg.keyboard.press('b'); pg.wait_for_timeout(100)
+    t1 = pg.evaluate(LC + '.state.w.t'); pg.wait_for_timeout(600)
+    check(pg.evaluate(LC + '.state.w.t') == t1 and t1 > 1, 'level crossing runs, and pauses under the panic screen')
+    pg.keyboard.press('b'); pg.wait_for_timeout(100)
+    pg.keyboard.press('p'); t1 = pg.evaluate(LC + '.state.w.t'); pg.wait_for_timeout(400)
+    check(pg.evaluate(LC + '.state.w.t') == t1 and pg.evaluate('!document.querySelector("#veil").hidden'), 'level crossing: P pauses')
+    pg.keyboard.press('p'); pg.wait_for_timeout(100)
+    if pg.evaluate('!document.querySelector("#btn-full").hidden'):
+        pg.keyboard.press('f'); pg.wait_for_timeout(400)
+        full = pg.evaluate('!!document.fullscreenElement')
+        if full:
+            pg.keyboard.press('f'); pg.wait_for_timeout(400)
+            check(not pg.evaluate('!!document.fullscreenElement'), 'level crossing: F leaves full screen again')
+        print('level crossing full screen:', full)
+    pg.evaluate(LC + '.state.w.trains.forEach((t) => { t.want = "stop"; t.v = 0; })')
+    pg.evaluate(LC + '.fastForward(' + str(26) + ')')
+    check(pg.evaluate(LC + '.state.w.trains.some((t) => t.kind === "freight")') or pg.evaluate(LC + '.state.w.over'), 'level crossing: Edith\'s freight train rolls in')
+    pg.screenshot(path=OUT + 'level_crossing.png')
+    pg.evaluate(LC + '.fastForward(3000)')
+    wait_until(pg, '!!document.querySelector(".arcade-modal:not([hidden]) .arcade-sheet")')
+    end = pg.evaluate('(() => { const w = window.levelCrossing.state.w; return { over: w.over, reason: w.reason, delivered: w.delivered, title: document.querySelector(".arcade-sheet h2").textContent }; })()')
+    check(end['over'], f'level crossing: an untended railway ends the shift ({end})')
+    print('level crossing edith:', end)
+    pg.keyboard.press('Escape'); pg.wait_for_timeout(150)
+
+    # ---- the full-screen family: shared checks ----
+    def yard_common(slug, hook, label):
+        pg.goto(BASE + slug); pg.wait_for_timeout(500)
+        close_help(pg)
+        for lv in LEVELS:
+            level(pg, lv)
+        fits = pg.evaluate('[document.documentElement.scrollWidth <= innerWidth, document.documentElement.scrollHeight <= innerHeight]')
+        check(fits[0] and fits[1], f'{label}: fills the screen with no scrolling at 1366 x 768 ({fits})')
+        pg.click('#btn-new'); pg.wait_for_timeout(200)
+        pg.evaluate('document.activeElement && document.activeElement.blur()')
+        pg.keyboard.press('Enter'); pg.wait_for_timeout(200)
+        check(pg.evaluate('document.querySelector("#start-card").hidden'), f'{label}: Enter starts the shift')
+
+    def yard_end(hook, label):
+        pg.keyboard.press('b'); pg.wait_for_timeout(100)
+        t1 = pg.evaluate(hook + '.state.w.t'); pg.wait_for_timeout(500)
+        check(pg.evaluate(hook + '.state.w.t') == t1 and t1 > 0.5, f'{label} runs, and pauses under the panic screen')
+        pg.keyboard.press('b'); pg.wait_for_timeout(100)
+        pg.keyboard.press('p'); t1 = pg.evaluate(hook + '.state.w.t'); pg.wait_for_timeout(400)
+        check(pg.evaluate(hook + '.state.w.t') == t1 and pg.evaluate('!document.querySelector("#veil").hidden'), f'{label}: P pauses')
+        pg.keyboard.press('p'); pg.wait_for_timeout(100)
+        pg.screenshot(path=OUT + label.replace(' ', '_') + '.png')
+        pg.evaluate(hook + '.fastForward(3000)')
+        wait_until(pg, '!!document.querySelector(".arcade-modal:not([hidden]) .arcade-sheet")')
+        end = pg.evaluate('(() => { const w = ' + hook + '.state.w; return { over: w.over, reason: w.reason, title: document.querySelector(".arcade-sheet h2").textContent }; })()')
+        check(end['over'], f'{label}: an untended shift ends ({end})')
+        print(label, 'edith:', end)
+        pg.keyboard.press('Escape'); pg.wait_for_timeout(150)
+
+    # ---- Cleared to Land ----
+    CTL = 'window.clearedToLand'
+    yard_common('cleared-to-land', CTL, 'cleared to land')
+    pg.keyboard.press('l'); pg.wait_for_timeout(150)
+    check(pg.evaluate(CTL + '.state.w.planes.some((p) => p.state === "approach" && p.kind === "plane")'), 'cleared to land: L clears a circling plane to land')
+    pg.keyboard.press('g'); pg.wait_for_timeout(150)
+    check(not pg.evaluate(CTL + '.state.w.planes.some((p) => p.state === "approach" && p.kind === "plane")'), 'cleared to land: G sends it around')
+    hp = pg.evaluate('(() => { const p = window.clearedToLand.state.w.planes.find((q) => q.state === "hold" || q.state === "inbound"); return p && { id: p.id, at: window.clearedToLand.toPage(p.x, p.y) }; })()')
+    if hp:
+        pg.mouse.click(hp['at'][0], hp['at'][1]); pg.wait_for_timeout(150)
+        st = pg.evaluate(CTL + '.state.w.planes.find((p) => p.id === ' + str(hp['id']) + ').state')
+        check(st in ('approach', 'hold', 'inbound'), f'cleared to land: clicking a circling plane clears it ({st})')
+    pg.keyboard.press('d'); pg.wait_for_timeout(150)
+    check(pg.evaluate(CTL + '.state.w.planes.some((p) => p.state === "push-wait" || p.state === "pushback")'), 'cleared to land: D pushes back the plane waiting at its gate')
+    pg.keyboard.press('r'); pg.wait_for_timeout(100)
+    check(pg.evaluate(CTL + '.state.w.runwayRed'), 'cleared to land: R turns the runway light red (Edith)')
+    pg.keyboard.press('r'); pg.wait_for_timeout(100)
+    yard_end(CTL, 'cleared to land')
+
+    # ---- Rush Hour ----
+    RH = 'window.rushHour'
+    yard_common('rush-hour', RH, 'rush hour')
+    j0 = pg.evaluate('(() => { const j = window.rushHour.state.w.map.junctions[0]; return { axis: j.axis, at: window.rushHour.toPage(j.x, j.y) }; })()')
+    pg.mouse.click(j0['at'][0], j0['at'][1]); pg.wait_for_timeout(150)
+    check(pg.evaluate(RH + '.state.w.map.junctions[0].phase') in ('amber', 'allred') or pg.evaluate(RH + '.state.w.map.junctions[0].axis') != j0['axis'], 'rush hour: clicking a junction switches its lights (amber first)')
+    pg.wait_for_timeout(2600)
+    check(pg.evaluate(RH + '.state.w.map.junctions[0].axis') != j0['axis'], 'rush hour: after amber and all-red the other way gets green')
+    pg.keyboard.press('2'); pg.wait_for_timeout(100)
+    check(pg.evaluate(RH + '.state.w.map.junctions[1].phase') == 'amber', 'rush hour: key 2 switches junction 2')
+    zb = pg.evaluate('(() => { const z = window.rushHour.state.w.map.zebras[0], b = window.rushHour.zebraButton(z); return window.rushHour.toPage(b[0], b[1]); })()')
+    pg.mouse.click(zb[0], zb[1]); pg.wait_for_timeout(150)
+    check(pg.evaluate(RH + '.state.w.map.zebras[0].walk'), 'rush hour: clicking a crossing signal asks for the green man')
+    pg.keyboard.press('q'); pg.wait_for_timeout(100)
+    check(not pg.evaluate(RH + '.state.w.map.zebras[0].walk'), 'rush hour: Q turns it off again')
+    yard_end(RH, 'rush hour')
+
+    # ---- Harbor Master ----
+    HMK = 'window.harborMaster'
+    yard_common('harbor-master', HMK, 'harbor master')
+    pg.keyboard.press('w'); pg.wait_for_timeout(100)
+    check(pg.evaluate(HMK + '.state.w.ship.tele') == 3, 'harbor master: W rings the telegraph to half ahead')
+    pg.keyboard.down('d'); pg.wait_for_timeout(600); pg.keyboard.up('d'); pg.wait_for_timeout(100)
+    r1 = pg.evaluate(HMK + '.state.w.ship.rudder')
+    check(r1 > 0.3, f'harbor master: holding D swings the rudder to starboard ({r1})')
+    pg.wait_for_timeout(1500)
+    sp = pg.evaluate(HMK + '.state.w.ship.v')
+    check(0.1 < sp < 1.3, f'harbor master: the ship gathers speed gradually ({sp})')
+    pg.keyboard.press('c'); pg.keyboard.press(' '); pg.wait_for_timeout(100)
+    check(pg.evaluate(HMK + '.state.w.ship.tele') == 2 and abs(pg.evaluate(HMK + '.state.w.ship.rudder')) < 0.01, 'harbor master: C centres the rudder and Space stops the engine')
+    check(pg.evaluate(HMK + '.state.w.forecast(8).pts.length') >= 30, 'harbor master: the forecast covers the next eight seconds')
+    pg.keyboard.press('r'); pg.wait_for_timeout(100)
+    check(pg.evaluate(HMK + '.state.w.map.bridge.up'), 'harbor master: R raises the bridge')
+    pg.keyboard.press('r'); pg.wait_for_timeout(100)
+    yard_end(HMK, 'harbor master')
     pg.keyboard.press('Escape'); pg.wait_for_timeout(150)
 
     # ---- Volume: WNI's own music and sound levels, kept per device, sliders that leave the game alone ----
@@ -527,7 +675,7 @@ with sync_playwright() as p:
     check(alive(), 'the leaderboard link should keep the same page (no reload)')
     check(bool(after) and after['tune'] == 'lobby' and after['step'] >= before['step'] + 3, f'the lobby tune should carry on into the leaderboard ({before} -> {after})')
     pg.click('.site-home')
-    wait_until(pg, 'location.pathname === "/" && document.querySelectorAll(".gcard").length === 18')
+    wait_until(pg, 'location.pathname === "/" && document.querySelectorAll(".gcard").length === 22')
     pg.wait_for_timeout(1000)
     back = pg.evaluate('window.Arcade.music.now()')
     check(alive() and bool(back) and back['tune'] == 'lobby' and back['step'] >= after['step'] + 3, f'the lobby tune should still be going back in the lobby ({after} -> {back})')
@@ -539,7 +687,7 @@ with sync_playwright() as p:
     left_bar = pg.evaluate('JSON.parse(sessionStorage.getItem("arcade-music-spot")).lobby')
     pg.wait_for_timeout(1500)
     pg.go_back()
-    wait_until(pg, 'location.pathname === "/" && document.querySelectorAll(".gcard").length === 18')
+    wait_until(pg, 'location.pathname === "/" && document.querySelectorAll(".gcard").length === 22')
     wait_until(pg, 'window.Arcade.music.now() && window.Arcade.music.now().tune === "lobby"')
     resumed = pg.evaluate('window.Arcade.music.now()')
     check(alive() and left_bar >= 2 and resumed['step'] >= left_bar * 8, f'the lobby tune should pick up at bar {left_bar}, not the start ({resumed})')

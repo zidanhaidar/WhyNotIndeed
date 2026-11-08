@@ -4,9 +4,9 @@
 
 <h1 align="center">Why not, indeed?</h1>
 
-<p align="center"><b>Sixteen quick games. Four opponents. One panic button.</b></p>
+<p align="center"><b>Twenty quick games. Four opponents. One panic button.</b></p>
 
-WNI is a small collection of browser games for the slow part of the day. Every game is short, playful and a little bit strange: you do not just beat a level, you outsmart an opponent that reacts to what you do. Twelve games are puzzles and duels you win or lose; four are endless, where you chase the best score you can until it is game over. The same four robot opponents appear in every game, from a friendly warm-up to one that is billed as impossible. Make an account and every run you finish lands on a shared leaderboard.
+WNI is a small collection of browser games for the slow part of the day. Every game is short, playful and a little bit strange: you do not just beat a level, you outsmart an opponent that reacts to what you do. Twelve games are puzzles and duels you win or lose; eight are endless, where you chase the best score you can until it is game over. The same four robot opponents appear in every game, from a friendly warm-up to one that is billed as impossible. Make an account and every run you finish lands on a shared leaderboard.
 
 And if someone walks past your desk, press **B**: the screen turns into a dull budget spreadsheet.
 
@@ -25,6 +25,7 @@ Open the site and pick a game card in the lobby, or go straight to a game's addr
 | `/sneaky-hangman`, `/herd-instinct`, `/coffee-spill`, `/copycat`, `/echo` | Games 6 to 10 |
 | `/going-up`, `/cable-spaghetti`, `/dont-click-that`, `/badge-check` | Games 11 to 14 (endless) |
 | `/sudoku`, `/minesweeper` | Games 15 and 16 |
+| `/level-crossing`, `/cleared-to-land`, `/rush-hour`, `/harbor-master` | Games 17 to 20 (endless, full screen) |
 | `/leaderboard` | Rankings, per game or all games, filtered by opponent |
 | `/account` | Log in, sign up, and your best runs |
 | `/credits` | Credits and licenses |
@@ -42,7 +43,7 @@ Each game has the same four levels.
 | **Excel** | Grandmaster | Plans ahead and reads your moves. A real fight. | x3 |
 | **Edith** | Impossible | Small, cheerful, and has never lost. Every Edith level has been checked to be winnable, but expect to lose a lot. | x5 |
 
-In the four endless games nobody wins: the opponent makes your run harder in its own way, and stars mark how far you got (for example 40, 90 and 150 riders in Going Up).
+In the eight endless games nobody wins: the opponent makes your run harder in its own way, and stars mark how far you got (for example 40, 90 and 150 riders in Going Up).
 
 ## The games
 
@@ -110,6 +111,24 @@ The classic number puzzle: fill the grid so every row, column and 3 by 3 box hol
 The classic minefield: open every square that is not a mine. A number tells you how many mines touch that square. Your first square is always safe and opens an area, and every field can be cleared by logic alone, so you never have to guess. The robot gets an identical field and starts sweeping the moment you open your first square; clear yours before it clears its own. Opening a mine ends the game. Fields grow from 9 by 9 with 10 mines (Pip) to 16 by 16 with 44 mines (Edith). Pip sometimes clicks without thinking and can blow itself up; the others never guess, and Edith hardly bothers to plant a flag.
 **Keys:** click to open (or click a number whose mines are all flagged to open around it), right click or hold to flag, arrows move the cursor, `Space` or `Enter` open, `F` flag, `P` pause (the field hides while paused), `N` new field. On a touch screen, the "Tapping digs" button switches taps to flags.
 
+### 17. Level Crossing (endless)
+You run a little railway that fills the whole screen, and every shift draws a brand new map: a loop of track with shortcuts, stations in up to four colors, and roads crossing the line. Passengers wear the color of the station they want. Click a train to send it off and click it again to brake (a dashed line shows where it will stop; green means at a platform). At a platform the doors open: riders in that station's color get off, then waiting people get on. Flip the yellow switch arrows to send a train down a shortcut or the long way round. Lower the crossing barriers before a train arrives and lift them once it has gone: a train that meets a car on a crossing is a crash and ends the shift at once, and so does a train running into another train. A barrier left down too long jams the traffic. Missions ask for a number of passengers in certain colors; finishing one takes a complaint away. Five complaints (a passenger who gives up waiting, a traffic jam, or a freight train held too long) close the line. Pip sends cars whenever it likes, Ted sends them in convoys, and Excel times them for the crossing your next train reaches. Excel and Edith give you two trains to drive. Edith also runs her own freight train on your tracks: it never stops at stations, only at red lights, so set a red light behind a train standing at a platform, but not for too long. There is a Full screen button for the biggest view.
+**Keys:** `Q` and `W` (or `Space`) send or brake train 1 and train 2, `1` to `6` lower or raise a crossing, `A` `S` `D` flip a switch, `Z` `X` `C` `V` red or green light (Edith), `H` horn, `F` full screen, `Enter` start, `P` pause, `N` new map.
+
+Games 18 to 20 are the same kind of full-screen game in new places, each with a brand new map every shift, its own sounds and a Full screen button.
+
+### 18. Cleared to Land (endless)
+You are the control tower of a little airport seen from above. Planes circle in holding patterns, each with a tail in its gate's color and a ring showing its fuel. Click one to clear it to land: it flies the approach (its shadow on the grass shrinks as it comes down), touches down in a puff of tyre smoke, rolls out and taxis to a gate of its color, where its passengers get off. Then it boards and shows READY: push it back, and when it reaches the holding point by the runway, clear it to take off. Only one plane may use the runway at a time: two planes meeting on it is a crash and ends the shift, so send a plane around if the runway is still busy. A plane that runs out of fuel flies to another airport, and planes kept waiting at their gate or at the runway complain. Five complaints close the airport; missions ask for planes of certain colors, and finishing one takes a complaint back. Ted sends planes in waves, Excel sends low-fuel planes exactly when your runway is busy, and Edith also flies her pink jet in for a touch and go whenever she likes: only a red runway light keeps her circling, and she hates to circle.
+**Keys:** `L` land the plane with the least fuel, `G` go around, `D` push back, `T` take off, `R` runway light (Edith), `F` full screen, `Enter` start, `P` pause, `N` new airport. Or click the planes.
+
+### 19. Rush Hour (endless)
+A brand new town at rush hour: a grid of streets with junctions and zebra crossings, blocks of offices, houses, parks and car parks. Cars come in at the edges, each heading for the side of town shown by the color on its roof. Click the round button in a junction to switch which way has green; the lights go amber and red for a moment first so the junction can clear. Click a zebra crossing's signal to give walkers the green man; it shows once no car is about to drive over the crossing. Cars brake for red lights and for anyone on a crossing, wait for oncoming traffic before turning left, and never block a junction. Walkers who wait too long get fed up and cross anyway, and a car that cannot stop in time hits them, which ends the shift. Complaints come from fed-up walkers, drivers kept at a red light, long queues of cars waiting to get into town (the numbers at the edges), and ambulances held at a red light (Excel and Edith).
+**Keys:** `1` to `6` switch a junction's lights, `Q` `W` `E` `R` green man at a crossing, `F` full screen, `Enter` start, `P` pause, `N` new town.
+
+### 20. Harbor Master (endless)
+You are the captain of a little cargo ship in a brand new harbor. Colored crates wait on the docks to go to the dock of their color. You steer with a real rudder (hold port or starboard, and it stays where you leave it) and an engine telegraph with five steps from full astern to full ahead. Ships do not turn or stop on the spot: speed and turning catch up gradually, and a small bow thruster turns a nearly stopped ship slowly. The dotted forecast line and ghost hulls show where the ship will be over the next eight seconds with the controls as they are, and turn red where trouble starts. Stop inside a dock's dashed circle and the crane swaps the cargo. Raise the drawbridge to pass (the drivers hate to wait) and lower it again behind you. Ramming another boat or a lowered bridge ends the shift; a gentle touch is only a nudge. Crates that wait too long, a full dock turning crates away, drivers kept at the bridge, and hitting the shore hard are complaints. Pip has sailboats and no bridge, Ted a ferry and the bridge, Excel wandering trawlers, and Edith gives you the big ship and sends her pink speedboat to cut across wherever you are heading.
+**Keys:** `A` `D` or arrows hold the rudder, `C` centre it, `W` `S` or arrows ring the telegraph, `Space` stop the engine, `R` the bridge, `H` horn, `F` full screen, `Enter` start, `P` pause, `N` new harbor. The helm buttons work by touch.
+
 ## Everywhere
 
 | Key | What it does |
@@ -126,7 +145,7 @@ Music and sound effects start off; the **Music** and **Sound** buttons in every 
 - **Sign up** with a username, email and password. **Log in** with your email or your username, plus your password (capitals do not matter).
 - Every run you finish scores points: the game's own score, multiplied by the opponent (Pip x1, Ted x2, Excel x3, Edith x5).
 - Finished a run before logging in? Log in within 30 minutes and that run is saved for you.
-- The leaderboard ranks everyone's best run in each game, or adds up each player's best across all sixteen games, and can be filtered by opponent.
+- The leaderboard ranks everyone's best run in each game, or adds up each player's best across all twenty games, and can be filtered by opponent.
 
 | Game | How its points are earned |
 |---|---|
@@ -146,6 +165,10 @@ Music and sound effects start off; the **Music** and **Sound** buttons in every 
 | Badge Check | 10 per correct call, 2 more per call in your current streak (up to 20), and 5 more for a quick call (with half the timer left). |
 | Sudoku | 8 per square you fill, and for finishing first 500, plus 3 per second ahead of the robot and 100 per unused mistake. |
 | Minesweeper | 2 per safe square you open, and for clearing first 500 plus 2 per second ahead of the robot. |
+| Level Crossing | 10 per passenger delivered to the station of their color, and 100 per mission finished. |
+| Cleared to Land | 2 per passenger landed at a gate of their color, 50 per take-off, and 150 per mission finished. |
+| Rush Hour | 10 per car that reaches its side of town, 15 per walker helped across, and 100 per mission finished. |
+| Harbor Master | 15 per crate delivered to the dock of its color, and 100 per mission finished. |
 
 ## Credits
 

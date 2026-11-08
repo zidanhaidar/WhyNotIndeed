@@ -1,0 +1,52 @@
+/* Rush Hour: a town from above. Asphalt-plum frame, traffic-light amber, Staatliches lettering. The layout is shared (games/shared/yard.css). */
+
+/* Only while this game is on screen: in-app links keep every page's stylesheet loaded, so the scope stops these rules leaking. */
+:where(html:has([data-page='rush-hour'])) {
+  &:root {
+    --bg: #4A3B6B;
+    --bg-lo: #2E2445;
+    --hi: #FFB020;
+    --alert: #E5483A;
+    --paper: #FFF8EA;
+    --field: #9CCB6B;
+    --ink: #1D1A33;
+    --soft: #4E4A63;
+    --display: 'Staatliches', 'Arial Narrow', sans-serif;
+
+    --bar-ink: #fff;
+    --bar-muted: #E2D9F0;
+    --bar-line: rgba(255, 255, 255, .4);
+    --bar-well: rgba(0, 0, 0, .22);
+    --bar-hover: rgba(255, 255, 255, .1);
+    --bar-active-bg: var(--hi);
+    --bar-active-ink: var(--ink);
+    --bar-active-muted: #5A4300;
+    --bar-display: var(--display);
+    --bar-focus: var(--hi);
+
+    --m-bg: var(--paper);
+    --m-ink: var(--ink);
+    --m-soft: var(--soft);
+    --m-accent: var(--bg);
+    --m-accent-ink: #fff;
+    --m-lose: #B3261E;
+    --m-display: var(--display);
+    --m-radius: 16px;
+    --m-backdrop: rgba(25, 18, 40, .62);
+  }
+
+  html& { background: var(--bg); }
+  body {
+    margin: 0;
+    color: var(--ink);
+    font: 15px/1.45 var(--bar-font);
+    background:
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, .05) 0 26px, transparent 26px 52px),
+      linear-gradient(var(--bg), var(--bg-lo));
+    background-attachment: fixed;
+  }
+  .queue { display: grid; gap: 4px; padding: 7px 10px; border: 2.5px solid var(--ink); border-radius: 12px; background: #fff; font-size: 12.5px; font-weight: 700; }
+  .queue div { display: flex; justify-content: space-between; gap: 8px; }
+  .queue span { color: var(--soft); }
+  .acts .wide { grid-column: 1 / -1; }
+}
